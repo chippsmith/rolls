@@ -12,16 +12,16 @@ fn read_input() -> String {
 fn entropy_to_mnemonic12(entropy: &[u8]) -> Vec<String> {
     // Ensure the entropy has exactly 16 bytes
     assert!(entropy.len() == 16);
-    println!("entropy {:?}", entropy);
+    //println!("entropy {:?}", entropy);
     let other_entropy: [u8; 16] = entropy.try_into().unwrap();
-    println!("other entropy {:?}", other_entropy);
+    //println!("other entropy {:?}", other_entropy);
     let mut v = u128::from_be_bytes(other_entropy);
-    println!("v before byte shift: {}", v);
+    //println!("v before byte shift: {}", v);
 
     //equivalent of left bitshift of 4
     //v = v * 16;
     
-    let mut v = v << 16;
+    let mut v = v << 4;
 
     println!("v after byte shift: {}", v);
      
