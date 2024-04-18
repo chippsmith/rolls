@@ -1,0 +1,1 @@
+Implementing coinkites rolls12.py in rust
