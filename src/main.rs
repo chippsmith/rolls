@@ -1,6 +1,6 @@
-use std::{io, ptr::read};
+use std::io;
 use sha256::digest;
-extern crate sha256;
+use num::BigInt;
 
 
 fn read_input() -> String {
@@ -14,41 +14,36 @@ fn entropy_to_mnemonic12(entropy: &[u8]) -> Vec<String> {
     assert!(entropy.len() == 16);
     //println!("entropy {:?}", entropy);
     let other_entropy: [u8; 16] = entropy.try_into().unwrap();
-    //println!("other entropy {:?}", other_entropy);
-    let mut v = u128::from_be_bytes(other_entropy);
-    //println!("v before byte shift: {}", v);
-
+    let v = u128::from_be_bytes(other_entropy);
+    let v = BigInt::from(v);
+    
     //equivalent of left bitshift of 4
     //v = v * 16;
+    let mut v = v << 4;     
     
-    let mut v = v << 4;
-
-    println!("v after byte shift: {}", v);
-     
-    
-
-    //let mut v: u128 = 0x00;
-    //let mut v: u128 = 0xffffffffffffffffffffffffffffffff;
     let mut indexes = Vec::new();
+    
     for i in 0..12 {
-        let m = v % 2048;
-        indexes.insert(i, m as u64);
+        let m:  BigInt = &v % BigInt::from(2048);
+        let m = m.to_u32_digits().1[0] as u16;
+        indexes.insert(0, m);
         v = v / 2048;
-
     }
 
-    println!("indexes {:?}", indexes);
-  
+    assert_eq!(v, BigInt::from(0));
+
     // Add the checksum to the last index
+    let a = digest(entropy);
+    let offset = &mut indexes[11];
+    let checksum= (hex::decode(&a).expect("invalid hex")[0] >> 4) as u16;
+    *offset = checksum + *offset;
     
-  
     let wl = include_str!("english_wordlist.txt");
     let mut mnemonics = Vec::new();
     for i in indexes {
         let word = wl.lines().skip(i as usize).next().unwrap().to_string();
         mnemonics.push(word);
     }
-  
     mnemonics
   }
 

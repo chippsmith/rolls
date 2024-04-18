@@ -194,8 +194,10 @@ def entropy_to_mnemonic12(entropy):
     indexes = []
     for i in range(12):
         v, m = divmod(v, 2048)
+        print(f"{m}")
         indexes.insert(0, m)
     # final 4 bits are a checksum
+    print(f"{indexes}")
     indexes[-1] += sha256(entropy).digest()[0] >> 4
     return [wl[i] for i in indexes]
 

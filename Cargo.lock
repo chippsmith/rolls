@@ -263,6 +263,7 @@ dependencies = [
  "digest",
  "hex",
  "num",
+ "num-bigint",
  "sha256",
 ]
 
